@@ -63,72 +63,22 @@ module.exports = (voiceName, text) => {
 				break;
 			}
 			case "acapela": {
-				var buffers = [];
-				var acapelaArray = [];
-				for (var c = 0; c < 15; c++) acapelaArray.push(~~(65 + Math.random() * 26));
-				var email = `${String.fromCharCode.apply(null, acapelaArray)}@gmail.com`;
-				var req = https.request(
+				var q = qs.encode({
+					text: text,
+					voice: voice.arg,
+					audio: "null",
+				});
+				https.get(
 					{
-						hostname: "acapelavoices.acapela-group.com",
-						path: "/index/getnonce",
-						method: "POST",
-						headers: {
-							"Content-Type": "application/x-www-form-urlencoded",
-						},
+						host: "gospeech.replit.app",
+						path: `/service/acapela_makemp3?${q}`,
 					},
 					(r) => {
-						r.on("data", (b) => buffers.push(b));
-						r.on("end", () => {
-							var nonce = JSON.parse(Buffer.concat(buffers)).nonce;
-							var req = http.request(
-								{
-									hostname: "acapela-group.com",
-									port: "8080",
-									path: "/webservices/1-34-01-Mobility/Synthesizer",
-									method: "POST",
-									headers: {
-										"Content-Type": "application/x-www-form-urlencoded",
-									},
-								},
-								(r) => {
-									var buffers = [];
-									r.on("data", (d) => buffers.push(d));
-									r.on("end", () => {
-										const html = Buffer.concat(buffers);
-										const beg = html.indexOf("&snd_url=") + 9;
-										const end = html.indexOf("&", beg);
-										const sub = html.subarray(beg, end).toString();
-										http.get(sub, (r) => {
-											r.on("data", (d) => buffers.push(d));
-											r.on("end", () => {
-												res(Buffer.concat(buffers));
-											});
-										});
-									});
-									r.on("error", rej);
-								}
-							);
-							req.end(
-								new URLSearchParams({
-									req_voice: voice.arg,
-									cl_pwd: "",
-									cl_vers: "1-30",
-									req_echo: "ON",
-									cl_login: "AcapelaGroup",
-									req_comment: `{"nonce":"${nonce}","user":"${email}"}`,
-									req_text: text,
-									cl_env: "ACAPELA_VOICES",
-									prot_vers: 2,
-									cl_app: "AcapelaGroup_WebDemo_Android",
-								}).toString()
-							);
-						});
+						var buffers = [];
+						r.on("data", (d) => buffers.push(d));
+						r.on("end", () => res(Buffer.concat(buffers)));
+						r.on("error", rej);
 					}
-				);
-				req.end(
-					new URLSearchParams({
-						json: `{"googleid":"${email}"`,
-					}).toString()
 				);
 				break;
 			}
