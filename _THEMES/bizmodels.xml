@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<theme id="bizmodels" name="Business Models">
+<theme id="bizmodels" name="Baszd meg">
 	<char id="male_01" name="male_01" thumb="poses_01.swf" facing="left" default="poses_01.swf" motion="" enable="Y" is_premium="N" aid="19679" money="0" sharing="0">
 		<category name="Business">
 			<action id="office_01.swf" name="Stand with briefcase" loop="Y" totalframe="60" enable="Y" aid="19680"/>
