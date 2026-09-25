@@ -1,1 +1,1 @@
-GoAnimate Remastered V3
+This is a fork of GoAnimate Remastered.
